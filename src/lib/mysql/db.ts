@@ -1,12 +1,12 @@
 import { createPool, Pool } from 'mysql2/promise';
-import { env } from '@/env';
+import { env } from '../env';
 
 const CONFIG = {
   user: env.DATABASE_USER,
   host: env.DATABASE_HOST,
   database: env.DATABASE_NAME,
   password: env.DATABASE_PASSWORD,
-  port: env.DATABASE_PORT,
+  port: Number(env.DATABASE_PORT),
 };
 
 class Database {
