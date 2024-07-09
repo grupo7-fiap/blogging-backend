@@ -1,17 +1,6 @@
 import { Request, Response } from 'express';
 import { database } from '../../../lib/mysql/db';
-import { RowDataPacket } from 'mysql2';
-
-interface Post extends RowDataPacket {
-  id: number;
-  title: string;
-  description: string;
-  content: string;
-  author: string;
-  subject: string;
-  modifiedDate: Date;
-  createdDate: Date;
-}
+import { Post } from '../../../interfaces/PostInterface';
 
 export const getPosts = async (req: Request, res: Response) => {
   try {
@@ -19,7 +8,7 @@ export const getPosts = async (req: Request, res: Response) => {
     const [rows] = await connection.query<Post[]>('SELECT * FROM posts');
     connection.release();
 
-    const formattedRows = rows.map(row => ({
+    const formattedRows = rows.map((row) => ({
       id: row.id,
       title: row.title,
       description: row.description,
@@ -45,7 +34,10 @@ export const getPostById = async (req: Request, res: Response) => {
 
   try {
     const connection = await database.getConnection();
-    const [rows] = await connection.query<Post[]>('SELECT * FROM posts WHERE id = ?', [postId]);
+    const [rows] = await connection.query<Post[]>(
+      'SELECT * FROM posts WHERE id = ?',
+      [postId],
+    );
     connection.release();
 
     if (rows.length === 0) {
