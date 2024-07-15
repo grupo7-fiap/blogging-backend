@@ -1,3 +1,5 @@
+// db.ts
+
 import { createPool, Pool } from 'mysql2/promise';
 import { env } from '../env';
 
@@ -22,6 +24,14 @@ class Database {
     } catch (error) {
       console.error(`Error connecting to the database: ${error}`);
       throw new Error(`Error connecting to the database: ${error}`);
+    }
+  }
+
+  async closePool() {
+    try {
+      await this.pool.end();
+    } catch (error) {
+      console.error(`Error closing the database pool: ${error}`);
     }
   }
 
