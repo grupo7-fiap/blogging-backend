@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import { database } from "../../../lib/mysql/db";
-import { RowDataPacket, ResultSetHeader } from "mysql2";
+import { Request, Response } from 'express';
+import { database } from '../../../lib/mysql/db';
+import { RowDataPacket, ResultSetHeader } from 'mysql2';
 
 interface Post extends RowDataPacket {
   id: number;
@@ -27,7 +27,7 @@ interface PostCreate {
 export const getPosts = async (req: Request, res: Response) => {
   try {
     const connection = await database.getConnection();
-    const [rows] = await connection.query<Post[]>("SELECT * FROM posts");
+    const [rows] = await connection.query<Post[]>('SELECT * FROM posts');
     connection.release();
 
     const formattedRows = rows.map((row) => ({
@@ -46,8 +46,8 @@ export const getPosts = async (req: Request, res: Response) => {
       data: formattedRows,
     });
   } catch (error) {
-    console.error("Error fetching posts:", error);
-    res.status(500).json({ success: false, error: "Failed to fetch posts" });
+    console.error('Error fetching posts:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch posts' });
   }
 };
 
@@ -57,13 +57,13 @@ export const getPostById = async (req: Request, res: Response) => {
   try {
     const connection = await database.getConnection();
     const [rows] = await connection.query<Post[]>(
-      "SELECT * FROM posts WHERE id = ?",
-      [postId]
+      'SELECT * FROM posts WHERE id = ?',
+      [postId],
     );
     connection.release();
 
     if (rows.length === 0) {
-      return res.status(404).json({ success: false, error: "Post not found" });
+      return res.status(404).json({ success: false, error: 'Post not found' });
     }
 
     const post: Post = rows[0];
@@ -83,8 +83,8 @@ export const getPostById = async (req: Request, res: Response) => {
       data: formattedPost,
     });
   } catch (error) {
-    console.error("Error fetching post by id:", error);
-    res.status(500).json({ success: false, error: "Failed to fetch post" });
+    console.error('Error fetching post by id:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch post' });
   }
 };
 
@@ -96,7 +96,7 @@ export const createPost = async (req: Request, res: Response) => {
   if (!title || !description || !content || !author || !subject) {
     return res.status(400).json({
       success: false,
-      error: "All fields are required.",
+      error: 'All fields are required.',
     });
   }
 
@@ -104,8 +104,8 @@ export const createPost = async (req: Request, res: Response) => {
     const connection = await database.getConnection();
 
     const [result] = await connection.query<ResultSetHeader>(
-      "INSERT INTO posts (title, description, content, author, subject) VALUES (?, ?, ?, ?, ?)",
-      [title, description, content, author, subject]
+      'INSERT INTO posts (title, description, content, author, subject) VALUES (?, ?, ?, ?, ?)',
+      [title, description, content, author, subject],
     );
 
     const newPostId = result.insertId;
@@ -125,7 +125,7 @@ export const createPost = async (req: Request, res: Response) => {
 
     res.status(201).json({ success: true, data: newPost });
   } catch (error) {
-    console.error("Error creating post:", error);
-    res.status(500).json({ success: false, error: "Failed to create post" });
+    console.error('Error creating post:', error);
+    res.status(500).json({ success: false, error: 'Failed to create post' });
   }
 };
