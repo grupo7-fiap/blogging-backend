@@ -96,17 +96,16 @@ export const createPost = async (req: Request, res: Response) => {
   if (!title || !description || !content || !author || !subject) {
     return res.status(400).json({
       success: false,
-      error: "All fields are required except createdDate.",
+      error: "All fields are required.",
     });
   }
 
   try {
     const connection = await database.getConnection();
-    const createdDate = new Date().toISOString();
 
     const [result] = await connection.query<ResultSetHeader>(
-      "INSERT INTO posts (title, description, content, author, subject, createdDate) VALUES (?, ?, ?, ?, ?, ?)",
-      [title, description, content, author, subject, createdDate]
+      "INSERT INTO posts (title, description, content, author, subject) VALUES (?, ?, ?, ?, ?)",
+      [title, description, content, author, subject]
     );
 
     const newPostId = result.insertId;
@@ -121,7 +120,7 @@ export const createPost = async (req: Request, res: Response) => {
       author,
       subject,
       modifiedDate: new Date(),
-      createdDate: new Date(createdDate),
+      createdDate: new Date(),
     };
 
     res.status(201).json({ success: true, data: newPost });
