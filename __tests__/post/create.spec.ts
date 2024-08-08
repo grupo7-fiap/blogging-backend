@@ -2,6 +2,8 @@ import request from "supertest";
 import { app } from "../../src/app";
 import { database } from "../../src/lib/mysql/db";
 
+let postId: number; 
+
 describe("GET /posts", () => {
   it("should return a list of posts", async () => {
     const response = await request(app).get("/posts");
@@ -23,33 +25,7 @@ describe("GET /posts", () => {
   });
 });
 
-describe("GET /posts/:id", () => {
-  it("should return a single post", async () => {
-    const postId = 1; // ID existe no banco de dados de teste
-    const response = await request(app).get(`/posts/${postId}`);
-    console.log(`GET /posts/${postId} response:`, response.body);
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty("success", true);
-    expect(response.body).toHaveProperty("data");
-    expect(response.body.data).toHaveProperty("id", postId);
-    expect(response.body.data).toHaveProperty("title");
-    expect(response.body.data).toHaveProperty("description");
-    expect(response.body.data).toHaveProperty("content");
-    expect(response.body.data).toHaveProperty("author");
-    expect(response.body.data).toHaveProperty("subject");
-    expect(response.body.data).toHaveProperty("modifiedDate");
-    expect(response.body.data).toHaveProperty("createdDate");
-  });
 
-  it("should return 404 if the post is not found", async () => {
-    const nonExistentPostId = 99999; // Um ID que não existe
-    const response = await request(app).get(`/posts/${nonExistentPostId}`);
-    console.log(`GET /posts/${nonExistentPostId} response:`, response.body);
-    expect(response.status).toBe(404);
-    expect(response.body).toHaveProperty("success", false);
-    expect(response.body).toHaveProperty("error", "Post not found");
-  });
-});
 
 // POST
 
@@ -68,15 +44,14 @@ describe("POST /posts", () => {
     expect(response.status).toBe(201);
     expect(response.body).toHaveProperty("success", true);
     expect(response.body.data).toHaveProperty("title", newPostData.title);
-    expect(response.body.data).toHaveProperty(
-      "description",
-      newPostData.description
-    );
+    expect(response.body.data).toHaveProperty("description", newPostData.description);
     expect(response.body.data).toHaveProperty("content", newPostData.content);
     expect(response.body.data).toHaveProperty("author", newPostData.author);
     expect(response.body.data).toHaveProperty("subject", newPostData.subject);
     expect(response.body.data).toHaveProperty("modifiedDate");
     expect(response.body.data).toHaveProperty("createdDate");
+
+    postId = response.body.data.id;
   });
 
   it("should return 400 if any required field is missing", async () => {
@@ -117,6 +92,33 @@ describe("POST /posts", () => {
   });
 });
 
+describe("GET /posts/:id", () => {
+    it("should return a single post", async () => {
+      const response = await request(app).get(`/posts/${postId}`);
+      console.log(`GET /posts/${postId} response:`, response.body);
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty("success", true);
+      expect(response.body).toHaveProperty("data");
+      expect(response.body.data).toHaveProperty("id", postId);
+      expect(response.body.data).toHaveProperty("title");
+      expect(response.body.data).toHaveProperty("description");
+      expect(response.body.data).toHaveProperty("content");
+      expect(response.body.data).toHaveProperty("author");
+      expect(response.body.data).toHaveProperty("subject");
+      expect(response.body.data).toHaveProperty("modifiedDate");
+      expect(response.body.data).toHaveProperty("createdDate");
+    });
+  
+    it("should return 404 if the post is not found", async () => {
+      const nonExistentPostId = 99999; // Um ID que não existe
+      const response = await request(app).get(`/posts/${nonExistentPostId}`);
+      console.log(`GET /posts/${nonExistentPostId} response:`, response.body);
+      expect(response.status).toBe(404);
+      expect(response.body).toHaveProperty("success", false);
+      expect(response.body).toHaveProperty("error", "Post not found");
+    });
+  });
+
 afterAll(async () => {
-  await database.closePool(); // Fechando o pool de conexões com o banco de dados após todos os testes
+  await database.closePool(); 
 });
