@@ -10,7 +10,7 @@ const PostSchema = z.object({
   content: z.string(),
   author: z.string(),
   subject: z.string(),
-  modifiedDate: z.date(),
+  //modifiedDate: z.date(),
   createdDate: z.date(),
 });
 
