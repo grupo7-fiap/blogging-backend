@@ -7,8 +7,8 @@ const router = Router();
 
 router.get('/', getPosts);
 router.get('/admin', getAdminPosts);
+router.put('/admin/update/:id', updatePost);
 router.get('/:id', getPostById);
 router.post('/', createPost);
-router.put('/:id', updatePost);
 
 export default router;
