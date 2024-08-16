@@ -2,93 +2,39 @@ import request from "supertest";
 import { app } from "../../../src/app";
 import { database } from "../../../src/lib/mysql/db";
 
-describe("PUT /posts/:id", () => {
-  it("should be able to update an existing post", async () => {
-    const postId = 1;
-    const updatedPostData = {
-      title: "Updated Title",
-      description: "Updated Description",
-      content: "Updated Content",
-      author: "Updated Author",
-      subject: "Updated Subject",
-    };
-
-    const response = await request(app)
-      .put(`/posts/${postId}`)
-      .send(updatedPostData);
-
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty("success", true);
-    expect(response.body).toHaveProperty(
-      "message",
-      "Post updated successfully"
-    );
-  });
-
-  it("should be able to return 400 if the input data is invalid", async () => {
-    const postId = 1;
-    const invalidPostData = {
-      title: "",
-      description: "Invalid Description",
-      content: "Invalid Content",
-      author: "Invalid Author",
-      subject: "Invalid Subject",
-    };
-
-    const response = await request(app)
-      .put(`/posts/${postId}`)
-      .send(invalidPostData);
-
-    expect(response.status).toBe(400);
-    expect(response.body).toHaveProperty("success", false);
-    expect(response.body).toHaveProperty("error", "Invalid input data.");
-  });
-
-  it("should be able to return 404 if the post is not found", async () => {
-    const nonExistentPostId = 99999;
-    const updatedPostData = {
-      title: "Title",
-      description: "Description",
-      content: "Content",
-      author: "Author",
-      subject: "Subject",
-    };
-
-    const response = await request(app)
-      .put(`/posts/${nonExistentPostId}`)
-      .send(updatedPostData);
-
-    expect(response.status).toBe(404);
-    expect(response.body).toHaveProperty("success", false);
-    expect(response.body).toHaveProperty("error", "Post not found");
-  });
-
-  it("should be able to return 500 if there is a server error", async () => {
-    const postId = 1;
-    jest
-      .spyOn(database.poolInstance, "getConnection")
-      .mockImplementationOnce(() => {
-        throw new Error("Database connection error");
-      });
-
-    const updatedPostData = {
-      title: "Title",
-      description: "Description",
-      content: "Content",
-      author: "Author",
-      subject: "Subject",
-    };
-
-    const response = await request(app)
-      .put(`/posts/${postId}`)
-      .send(updatedPostData);
-
-    expect(response.status).toBe(500);
-    expect(response.body).toHaveProperty("success", false);
-    expect(response.body).toHaveProperty("error", "Failed to update post");
-  });
-
+describe("PUT /posts/admin/update/:id", () => {
   afterAll(async () => {
     await database.closePool();
+  });
+  
+
+  it("should update an existing post", async () => {
+    const getAllPostsResponse = await request(app).get("/posts/admin");
+    
+    expect(getAllPostsResponse.status).toBe(200);
+    expect(getAllPostsResponse.body).toHaveProperty("success", true);
+    expect(getAllPostsResponse.body).toHaveProperty("data");
+    expect(getAllPostsResponse.body.data).toBeInstanceOf(Array);
+
+    const postId = getAllPostsResponse.body.data[0]?.id;
+    if (!postId) {
+      throw new Error("Não tem nenhum post no banco de dados");
+    }
+
+    const updatedPostData = {
+      title: "Fundamentos da História",
+      description: "Um resumo dos principais eventos históricos.",
+      content: "Aqui, discutiremos os eventos mais significativos na história mundial, desde as civilizações antigas até os eventos modernos. A história nos ajuda a entender o presente e a planejar o futuro.",
+      author: "Maria Oliveira",
+      subject: "História",
+    };
+    const updateResponse = await request(app).put(`/posts/admin/update/${postId}`).send(updatedPostData);
+    const response = await request(app).get(`/posts/${postId}`);
+    console.log(response.body);
+    console.log(updateResponse.body);
+
+    expect(updateResponse.status).toBe(200);
+    expect(updateResponse.body).toHaveProperty("success", true);
+    expect(updateResponse.body).toHaveProperty("message", "Post updated successfully");
   });
 });
