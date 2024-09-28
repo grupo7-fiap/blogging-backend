@@ -1,0 +1,55 @@
+name: Node.js CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env: 
+      PORT: 3000
+      ENV: development
+      DATABASE_HOST: localhost
+      DATABASE_PORT: 3306
+      MYSQL_ROOT_PASSWORD: 123456
+      DATABASE_USER: 1fsdt
+      DATABASE_PASSWORD: 1fsdt
+      DATABASE_ENV: blogging_backend
+
+    steps:
+    - name: Check out code
+    - uses: actions/checkout@v3
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+
+    - name: Install dependencies
+    - run: npm install
+        
+    - name: Run Docker Compose
+    - run: docker-compose up -d
+
+    - name: Wait for Docker services
+      run: sleep 10s
+
+    - name: Build the project
+    - run: npm run build 
+
+    - name: Start the project
+    - run: npm start
+
+    - name: Run tests
+    - run: npm test
+
+    - name: Stop and remove Docker containers
+      run: docker-compose down

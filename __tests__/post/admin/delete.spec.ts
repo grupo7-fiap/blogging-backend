@@ -22,5 +22,13 @@ describe.only('DELETE /posts/admin/delete/:id', () => {
       expect(deleteResponse.status).toBe(200);
       expect(deleteResponse.body).toHaveProperty('success', true);
     });
+    it('should return 404 when trying to delete a non-existent post', async () => {
+      const nonExistentPostId = 999999;
+  
+      const deleteResponse = await request(app).delete(`/posts/admin/delete/${nonExistentPostId}`);
+  
+      expect(deleteResponse.status).toBe(404);
+      expect(deleteResponse.body).toHaveProperty('success', false);
+    });
   });
   
