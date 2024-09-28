@@ -8,7 +8,7 @@ A plataforma foi um sucesso e, agora, nossa aplicação vai escalar para um pano
 Portanto, precisaremos refatorar nosso Back-end, utilizando a plataforma de desenvolvimento node.js, e precisaremos persistir esses dados em um banco de dados, seja ele SQL ou NoSQL, de acordo com a decisão do grupo.
 
 ## Documentação
-A documentação pode ser acessada [neste link](https://#.com).
+A documentação pode ser acessada [neste link](https://docs.google.com/document/d/1wzc4hcrCinrpNv3ntBum-NFFZhJXcKt6eMjppT9ZJxQ/edit?usp=sharing).
 
 ## Vídeo
-O vídeo pode ser acessado [neste link](https://#.com).
+O vídeo pode ser acessado [neste link](https://youtu.be/eY4RZxMBcKA).
