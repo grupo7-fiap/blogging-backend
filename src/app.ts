@@ -5,12 +5,26 @@ import cors from 'cors';
 
 export const app = express();
 
-// Configuração de middlewares
-app.use(express.json());
-app.use(cors({ origin: 'http://localhost:3001' }));
-console.log('CORS middleware applied');
+const allowedOrigins = ['http://localhost:3001', 'http://localhost:8081'];
 
-// Configuração de rotas
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Não permitido pelo CORS'));
+      }
+    },
+    methods: 'GET, POST, PUT, DELETE, OPTIONS',
+    allowedHeaders: 'Content-Type, Authorization',
+  })
+);
+
+console.log('CORS middleware configurado');
+
+app.use(express.json());
+
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
