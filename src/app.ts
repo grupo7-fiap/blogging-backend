@@ -1,7 +1,9 @@
 import express from 'express';
 import postsRouter from './http/routes/route';
 import authRouter from './http/routes/authroute';
+import userRouter from './http/routes/userRoutes';
 import cors from 'cors';
+import studentRouter from './http/routes/studentRoutes';
 
 export const app = express();
 
@@ -18,7 +20,7 @@ app.use(
     },
     methods: 'GET, POST, PUT, DELETE, OPTIONS',
     allowedHeaders: 'Content-Type, Authorization',
-  })
+  }),
 );
 
 console.log('CORS middleware configurado');
@@ -31,3 +33,5 @@ app.get('/', (req, res) => {
 
 app.use('/posts', postsRouter);
 app.use('/auth', authRouter);
+app.use('/users', userRouter);
+app.use('/students', studentRouter);
