@@ -5,6 +5,7 @@ import { searchAdminPosts } from '../controllers/post/admin/search';
 import { updatePost } from '../controllers/post/admin/put';
 import { deleteAdminPost } from '../controllers/post/admin/delete';
 import { authenticateToken } from '../../middleware/auth';
+import { getQuizByPost } from '../controllers/quiz/get';
 
 const router = Router();
 
@@ -13,6 +14,7 @@ router.get('/admin', authenticateToken, getAdminPosts);
 router.put('/admin/update/:id', authenticateToken, updatePost);
 router.get('/admin/search', authenticateToken, searchAdminPosts);
 router.delete('/admin/delete/:id', authenticateToken, deleteAdminPost);
+router.get('/quiz/:id', getQuizByPost);
 router.get('/:id', getPostById);
 router.post('/', authenticateToken, createPost);
 
