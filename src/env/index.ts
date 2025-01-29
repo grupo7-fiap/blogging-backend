@@ -11,6 +11,7 @@ const envSchema = z.object({
   DATABASE_NAME: z.string(),
   DATABASE_PASSWORD: z.string(),
   DATABASE_PORT: z.coerce.number(),
+  OPENAI_API_KEY: z.string(),
 });
 
 const _env = envSchema.safeParse(process.env);

@@ -2,12 +2,15 @@
   "name": "blogging-backend",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "commonjs",
+
   "scripts": {
     "test": "jest --detectOpenHandles",
     "start:dev": "tsx watch src/server.ts",
     "start": "node build/server.js",
     "dev": "ts-node-dev src/server.ts",
-    "build": "tsup src --out-dir build"
+    "build": "tsup src --out-dir build",
+    "run:index": "ts-node src/index.ts"
   },
   "keywords": [],
   "author": "",
@@ -48,6 +51,7 @@
     "dotenv": "16.4.5",
     "jsonwebtoken": "9.0.2",
     "mysql2": "3.10.1",
+    "openai": "^4.80.0",
     "zod": "3.23.8"
   }
 }

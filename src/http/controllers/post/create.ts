@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { database } from '../../../lib/mysql/db';
 import { RowDataPacket, ResultSetHeader } from 'mysql2';
+import { createQuiz } from '../quiz/create';
 
 interface Post extends RowDataPacket {
   id: number;
@@ -110,7 +111,6 @@ export const createPost = async (req: Request, res: Response) => {
 
     const newPostId = result.insertId;
 
-    connection.release();
 
     const newPost: PostCreate = {
       id: newPostId,
@@ -122,6 +122,16 @@ export const createPost = async (req: Request, res: Response) => {
       modifiedDate: new Date(),
       createdDate: new Date(),
     };
+
+    const quiz = await createQuiz(newPostId, content);
+
+    if (!quiz) {
+      return res.status(500).json({
+        success: false,
+        error: 'Falha ao criar quiz',
+      });
+    }
+    connection.release();
 
     res.status(201).json({ success: true, data: newPost });
   } catch (error) {
