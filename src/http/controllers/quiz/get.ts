@@ -22,8 +22,9 @@ export const getQuizByPost = async (req: Request, res: Response) => {
         return res.status(404).json({ error: 'Nenhum quiz encontrado para este post.' });
       }
   
-      const formattedQuestions = rows[0].questions.replace(/\n/g, ' ').trim();
-      res.json({ questions: formattedQuestions });
+      const parsedQuestions = JSON.parse(rows[0].questions);
+
+      res.json({ questions: parsedQuestions });
 
     } catch (error) {
       const err = error as Error;
